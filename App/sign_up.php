@@ -1,26 +1,20 @@
 <?php
-    // Conexión a la base de datos
-    require_once 'db_config.php'; // Asegúrate de que este archivo esté en el mismo directorio
+    require_once 'db_config.php';
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        // Recoger datos del formulario
         $username = $_POST['username'];
         $password = $_POST['password'];
         $phone_number = $_POST['phone_number'];
         $address = $_POST['address'];
 
-        // Validar y procesar datos
-        // Aquí deberías agregar la validación de datos y el cifrado de contraseñas (ej: password_hash)
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
-        // Inserción en la base de datos
         $stmt = $conn->prepare("INSERT INTO customer (username, password, phone_number, address) VALUES (?, ?, ?, ?)");
         $stmt->bind_param("ssss", $username, $hashed_password, $phone_number, $address);
 
         if ($stmt->execute()) {
-            // Redirigir al dashboard de usuario después del registro exitoso
             header('Location: dashboard_user.php');
-            exit(); // Asegúrate de que el script se detenga después de la redirección
+            exit();
         } else {
             echo "Error al registrarse: " . $stmt->error;
         }
@@ -35,7 +29,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Registro</title>
-        <link rel="stylesheet" href="path/to/style.css"> <!-- Asegúrate de que la ruta sea correcta -->
+        <link rel="stylesheet" href="path/to/style.css">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <link rel="stylesheet" href="css/styles.css">
         <style>
@@ -53,8 +47,8 @@
                     padding: 20px;
                     border-radius: 8px;
                     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                    width: 100%; /* Asegúrate de que el formulario ocupe todo el ancho posible */
-                    max-width: 400px; /* Limita el ancho máximo para dispositivos grandes */
+                    width: 100%;
+                    max-width: 400px;
                 }
                 .login-form input {
                     margin-bottom: 15px;
@@ -78,7 +72,7 @@
     </head>
     <body>
         <div class="login-container">
-            <img src="img/logo.jpg" alt="Logo" class="logo"> <!-- Asegúrate de que la ruta sea correcta -->
+            <img src="img/logo.jpg" alt="Logo" class="logo">
             
             <div class="login-form">
                 <h2>Registro</h2>
@@ -94,6 +88,6 @@
             </div>
         </div>
 
-        <?php require_once 'footer.php'; ?> <!-- Incluir footer desde el archivo externo -->
+        <?php require_once 'footer.php'; ?>
     </body>
 </html>
