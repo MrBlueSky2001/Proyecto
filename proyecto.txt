@@ -1,0 +1,176 @@
+BASE DE DATOS
+
+-- Crear tabla de restaurantes
+CREATE TABLE Restaurant (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    address TEXT,
+    phone_number VARCHAR(20),
+    email VARCHAR(255) UNIQUE,
+    description TEXT,
+    open_time TIME,
+    close_time TIME
+);
+
+-- Crear tabla de clientes
+CREATE TABLE Customer (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(20),
+    address TEXT
+);
+
+-- Crear tabla de comidas
+CREATE TABLE Food (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    restaurant_id INT,
+    FOREIGN KEY (restaurant_id) REFERENCES Restaurant(id)
+        ON DELETE CASCADE
+);
+
+-- Crear tabla de reservas
+CREATE TABLE Reservation (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT,
+    restaurant_id INT,
+    table_number INT,
+    reservation_date DATE,
+    reservation_time TIME,
+    number_of_guests INT,
+    status ENUM('pending', 'confirmed', 'cancelled') DEFAULT 'pending',
+    FOREIGN KEY (customer_id) REFERENCES Customer(id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (restaurant_id) REFERENCES Restaurant(id)
+        ON DELETE CASCADE
+);
+
+-- Crear tabla de pedidos anticipados
+CREATE TABLE PreOrder (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT,
+    reservation_id INT,
+    status ENUM('pending', 'confirmed', 'cancelled') DEFAULT 'pending',
+    FOREIGN KEY (customer_id) REFERENCES Customer(id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (reservation_id) REFERENCES Reservation(id)
+        ON DELETE CASCADE
+);
+
+-- Tabla intermedia para manejar la relación muchos a muchos entre PreOrder y Food
+CREATE TABLE PreOrder_Food (
+    preorder_id INT,
+    food_id INT,
+    PRIMARY KEY (preorder_id, food_id),
+    FOREIGN KEY (preorder_id) REFERENCES PreOrder(id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (food_id) REFERENCES Food(id)
+        ON DELETE CASCADE
+);
+
+_________________________________________________________________________________________________________________________
+
+3. Esquema de Colores
+El esquema de colores tiene un papel importante en la percepción de la elegancia. Aquí te propongo una paleta de colores sobria y sofisticada:
+
+Color Principal:
+
+Negro (#000000): Transmite elegancia, sobriedad y profesionalismo.
+Colores Secundarios:
+
+Dorado (#D4AF37): Representa lujo y sofisticación. Úsalo en pequeños detalles o para resaltar elementos importantes.
+Blanco Marfil (#F8F5F2): Un blanco suave que aporta limpieza y minimalismo.
+Colores de Respaldo (para detalles):
+
+Gris Oscuro (#2F2F2F): Puede usarse en fondos o texto secundario.
+Plateado (#C0C0C0): Alternativa para detalles y bordes, aporta un toque elegante sin ser demasiado llamativo.
+
+Ejemplo de uso de colores:
+Fondo principal: Blanco marfil o gris claro.
+Botones importantes (reservar, enviar, etc.): Negro con texto dorado o viceversa.
+Encabezados y títulos: Negro o gris oscuro.
+
+4. Tipografía
+1. Serif (para títulos y encabezados):
+Fuente: "Playfair Display"
+Característica: Serif elegante y clásica, perfecta para los títulos grandes y con presencia. Da un toque de lujo.
+Ejemplo: Usarla en el logo y encabezados importantes (H1, H2, H3).
+2. Sans-serif (para cuerpo de texto):
+Fuente: "Montserrat" o "Lato"
+Característica: Sans-serif moderna y limpia. Su claridad es ideal para el cuerpo del texto.
+Ejemplo: Usarla para párrafos, botones, menús y detalles pequeños.
+Tamaños recomendados:
+Títulos (H1): 36px
+Subtítulos (H2, H3): 28px - 32px
+Texto regular: 16px - 18px
+Botones: 16px
+
+5. Iconografía
+Estilo de íconos:
+Líneas delgadas y simples, preferiblemente monocromáticas en negro o dorado.
+Ejemplo de íconos a utilizar:
+Ícono de "mesa" para la funcionalidad de reservas.
+Ícono de "calendario" para fechas de reservas.
+Ícono de "usuario" para perfiles de clientes y administradores.
+Ícono de "cuchillo y tenedor" para simbolizar restaurantes o menús.
+Librerías recomendadas:
+Font Awesome: Ofrece una colección extensa y personalizable.
+Feather Icons: Íconos minimalistas, con trazos finos que añaden elegancia.
+
+6. Botones y Formulario
+Los botones y formularios son una parte importante de la interfaz. Deben ser sencillos pero sofisticados.
+Botones:
+Color de fondo principal: Negro o blanco.
+Texto: Color dorado.
+Bordes: Sin bordes o con bordes redondeados muy sutiles (2px - 4px).
+Sombra: Sombra muy sutil para dar profundidad, pero sin que parezca pesado.
+Hover: Cambio de color a dorado con texto en blanco.
+Formulario:
+Input Fields:
+Fondos blancos o gris claro.
+Borde inferior del input con línea dorada.
+Texto y etiquetas en gris oscuro o negro.
+Botones de Enviar: Fondo negro con texto dorado y borde suave.
+
+7. Diseño de Interfaz (UI)
+La interfaz debe reflejar simplicidad y claridad, permitiendo una experiencia de usuario fluida.
+Barra de Navegación:
+Color: Negro con texto en blanco o dorado.
+Links: Espaciados y con tipografía serif para un toque más elegante.
+Footer:
+Color: Negro o gris oscuro.
+Texto: Blanco o plateado.
+Links y contacto: Íconos discretos en dorado.
+
+MAPA DE NAVEGACIÓN
+
+- Página de Inicio (Home)
+    |
+    ├── Login
+    |    ├── Recuperar contraseña
+    |    └── Registro de nuevos usuarios (Sign Up)
+    |
+    ├── Panel del Cliente (Dashboard)
+    |    ├── Perfil del Usuario
+    |    ├── Hacer una Reserva
+    |    |    ├── Elegir Restaurante
+    |    |    ├── Selección de Mesa y Fecha
+    |    |    └── Confirmación de Reserva
+    |    ├── Reservas Activas
+    |    └── Historial de Reservas
+    |
+    ├── Panel de Administración (solo para usuarios con rol de admin)
+    |    ├── Gestión de Restaurantes
+    |    ├── Gestión de Mesas
+    |    ├── Gestión de Reservas
+    |    └── Gestión de Usuarios
+    |
+    ├── Página de Restaurantes
+    |    └── Vista de detalles del restaurante (información y reservas disponibles)
+    |
+    └── Footer
+         ├── Contacto
+         ├── Términos y condiciones
+         └── Política de privacidad

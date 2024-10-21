@@ -1,0 +1,45 @@
+/* Tipografías */
+body {
+    font-family: serif;
+    background-color: #F9F6F2; /* Fondo claro y elegante */
+    color: #2F2F2F; /* Texto oscuro suave */
+}
+
+h1, h2, h3, .logo {
+    font-family: 'Playfair Display', serif; /* Tipografía elegante para títulos */
+}
+
+/* Estilos para el logo */
+.logo {
+    max-width: 200px;
+    width: 100%;
+    height: auto;
+    margin-top: 20px;
+}
+
+/* Estilos para el botón */
+.custom-btn {
+    background-color: #ffffff; /* Color marrón dorado */
+    border: 2px solid #D4AF37; /* Borde color dorado */
+    color: black;
+    font-size: 18px;
+    padding: 10px 25px;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.custom-btn:hover {
+    background-color: #D4AF37; /* Tonalidad más clara al hacer hover */
+    border-color: #D4AF37; /* Color dorado más vivo al hacer hover */
+    color: white;
+}
+
+/* Footer elegante */
+.footer {
+    background-color: #2F2F2F;
+    width: 100%;
+    padding: 15px;
+    font-size: 14px;
+    color: #ccc; /* Texto en color gris claro */
+}
