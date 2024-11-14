@@ -1,5 +1,6 @@
 <?php
     require_once 'db_config.php';
+    session_start();
 
     $error = '';
 
@@ -15,10 +16,12 @@
         $user = $result->fetch_assoc(); 
 
         if ($user && password_verify($password, $user['password'])) {
+            $_SESSION['user'] = $user;
+            
             if ($user['role'] === 'admin') {
-                header('Location: dashboard_admin.php');
-            } else {
-                header('Location: dashboard_user.php');
+                header('Location: admin/dashboard_admin.php');
+            } elseif ($user['role'] === 'customer') {
+                header('Location: cliente/dashboard_user.php');
             }
             exit();
         } else {
@@ -26,6 +29,7 @@
         }
     }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -103,6 +107,6 @@
                 </div>
             </div>
         </div>
-        <?php require_once 'footer.php'; ?>
     </body>
+    <?php require_once 'footer.php'; ?>
 </html>

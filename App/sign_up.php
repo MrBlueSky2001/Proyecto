@@ -13,7 +13,7 @@
         $stmt->bind_param("ssss", $username, $hashed_password, $phone_number, $address);
 
         if ($stmt->execute()) {
-            header('Location: dashboard_user.php');
+            header('Location: cliente/dashboard_user.php');
             exit();
         } else {
             echo "Error al registrarse: " . $stmt->error;
