@@ -2,30 +2,39 @@
 require_once '../../db_config.php';
 session_start();
 
+// Configuración para responder con JSON
 header('Content-Type: application/json');
 
+// Verificar si el usuario está autenticado y es admin
 if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
-    header('Location: ../../login.php');
+    echo json_encode(['error' => 'No tienes permisos para realizar esta acción.']);
     exit();
 }
 
-$name = $_POST['name'];
-$description = $_POST['description'];
-$restaurant_id = $_POST['restaurant_id'];
+// Obtener los datos del formulario
+$name = isset($_POST['name']) ? $_POST['name'] : '';
+$description = isset($_POST['description']) ? $_POST['description'] : '';
+$restaurant_id = isset($_POST['restaurant_id']) ? $_POST['restaurant_id'] : '';
+$category_id = isset($_POST['category_id']) ? $_POST['category_id'] : '';
 
-if (empty($name) || empty($description) || empty($restaurant_id)) {
+// Validar que los campos necesarios no estén vacíos
+if (empty($name) || empty($description) || empty($restaurant_id) || empty($category_id)) {
     echo json_encode(['error' => 'Todos los campos son obligatorios']);
     exit();
 }
 
-$stmt = $conn->prepare("INSERT INTO food (name, description, restaurant_id) VALUES (?, ?, ?)");
-$stmt->bind_param('ssi', $name, $description, $restaurant_id);
+// Preparar la consulta para insertar la comida
+$stmt = $conn->prepare("INSERT INTO food (name, description, restaurant_id, category_id) VALUES (?, ?, ?, ?)");
+$stmt->bind_param('ssii', $name, $description, $restaurant_id, $category_id);
 
+// Ejecutar la consulta
 if ($stmt->execute()) {
     echo json_encode(['success' => 'Comida añadida con éxito']);
 } else {
-    echo json_encode(['error' => 'Error al añadir la comida']);
+    // Si ocurre un error, se retorna el error
+    echo json_encode(['error' => 'Error al añadir la comida: ' . $stmt->error]);
 }
 
+// Cerrar la conexión y la consulta
 $stmt->close();
 $conn->close();

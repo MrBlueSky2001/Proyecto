@@ -9,6 +9,9 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
 
 // Obtener los restaurantes y sus comidas
 $restaurants = $conn->query("SELECT * FROM restaurant");
+
+// Obtener las categorías de alimentos
+$categories = $conn->query("SELECT * FROM foodcategory");
 ?>
 
 <!DOCTYPE html>
@@ -39,20 +42,26 @@ $restaurants = $conn->query("SELECT * FROM restaurant");
                                     <th>ID</th>
                                     <th>Nombre</th>
                                     <th>Descripción</th>
+                                    <th>Categoría</th>
                                     <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-                                $foods = $conn->query("SELECT * FROM food WHERE restaurant_id = " . $restaurant['id']);
+                                // Usamos INNER JOIN para obtener el category_name
+                                $foods = $conn->query("SELECT food.id, food.name, food.description, foodcategory.category_name
+                                                       FROM food
+                                                       INNER JOIN foodcategory ON food.category_id = foodcategory.id
+                                                       WHERE food.restaurant_id = " . $restaurant['id']);
                                 while ($food = $foods->fetch_assoc()): ?>
                                     <tr>
                                         <td><?= $food['id'] ?></td>
                                         <td><?= $food['name'] ?></td>
                                         <td><?= $food['description'] ?></td>
+                                        <td><?= $food['category_name'] ?></td>
                                         <td>
                                             <!-- Botones para abrir los modales de editar y eliminar -->
-                                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editFoodModal" data-id="<?= $food['id'] ?>" data-name="<?= $food['name'] ?>" data-description="<?= $food['description'] ?>">Editar</button>
+                                            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editFoodModal" data-id="<?= $food['id'] ?>" data-name="<?= $food['name'] ?>" data-description="<?= $food['description'] ?>" data-category="<?= $food['category_name'] ?>">Editar</button>
                                             <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteFoodModal" data-id="<?= $food['id'] ?>">Eliminar</button>
                                         </td>
                                     </tr>
@@ -86,6 +95,14 @@ $restaurants = $conn->query("SELECT * FROM restaurant");
                     <div class="mb-3">
                         <label for="addFoodDescription" class="form-label">Descripción</label>
                         <textarea class="form-control" id="addFoodDescription" name="description" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="addFoodCategory" class="form-label">Categoría</label>
+                        <select class="form-select" id="addFoodCategory" name="category_id" required>
+                            <?php while ($category = $categories->fetch_assoc()): ?>
+                                <option value="<?= $category['id'] ?>"><?= $category['category_name'] ?></option>
+                            <?php endwhile; ?>
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Guardar</button>
                 </form>
@@ -139,56 +156,153 @@ $restaurants = $conn->query("SELECT * FROM restaurant");
     </div>
 </div>
 
+<!-- Modal para mostrar mensajes de éxito o error -->
+<div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="messageModalLabel">Mensaje</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modalMessageContent">
+                <!-- El contenido del mensaje se llenará aquí -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// Variables para manejar los modales y formularios
 document.addEventListener('DOMContentLoaded', function () {
-    // Añadir comida
-    var addFoodModal = document.getElementById('addFoodModal');
-    addFoodModal.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget;
-        document.getElementById('addRestaurantId').value = button.getAttribute('data-restaurant-id');
-    });
 
-    document.getElementById('addFoodForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        var formData = new FormData(this);
-        fetch('add_food.php', { method: 'POST', body: formData })
-            .then(response => response.json())
-            .then(data => location.reload());
-    });
+// Función para mostrar el modal con un mensaje
+function showMessage(message, isSuccess) {
+    const modalMessageContent = document.getElementById('modalMessageContent');
+    modalMessageContent.textContent = message;  // Inyectamos el mensaje
+    const modal = new bootstrap.Modal(document.getElementById('messageModal'));
 
-    // Editar comida
-    var editFoodModal = document.getElementById('editFoodModal');
-    editFoodModal.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget;
-        document.getElementById('editFoodId').value = button.getAttribute('data-id');
-        document.getElementById('editFoodName').value = button.getAttribute('data-name');
-        document.getElementById('editFoodDescription').value = button.getAttribute('data-description');
-    });
+    // Cambiar el color del modal dependiendo de si es un mensaje de éxito o error
+    if (isSuccess) {
+        document.querySelector('.modal-title').textContent = "Éxito";
+        document.querySelector('.modal-header').style.backgroundColor = "#28a745";  // Verde para éxito
+    } else {
+        document.querySelector('.modal-title').textContent = "Error";
+        document.querySelector('.modal-header').style.backgroundColor = "#dc3545";  // Rojo para error
+    }
 
-    document.getElementById('editFoodForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        var formData = new FormData(this);
-        fetch('edit_food.php', { method: 'POST', body: formData })
-            .then(response => response.json())
-            .then(data => location.reload());
-    });
+    modal.show();
+}
 
-    // Eliminar comida
-    var deleteFoodModal = document.getElementById('deleteFoodModal');
-    deleteFoodModal.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget;
-        document.getElementById('confirmDeleteFood').setAttribute('data-id', button.getAttribute('data-id'));
-    });
+// Añadir comida
+var addFoodModal = document.getElementById('addFoodModal');
+addFoodModal.addEventListener('show.bs.modal', function (event) {
+    var button = event.relatedTarget;
+    document.getElementById('addRestaurantId').value = button.getAttribute('data-restaurant-id');
+});
 
-    document.getElementById('confirmDeleteFood').addEventListener('click', function () {
-        var id = this.getAttribute('data-id');
-        fetch('delete_food.php?id=' + id, { method: 'GET' })
-            .then(response => response.json())
-            .then(data => location.reload());
+document.getElementById('addFoodForm').addEventListener('submit', function (e) {
+    e.preventDefault();  // Prevenir que se recargue la página al enviar el formulario
+    
+    // Obtener los datos del formulario
+    var formData = new FormData(this);
+    
+    // Hacer la solicitud al servidor usando fetch
+    fetch('add_food.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json()) // Asegurar de que la respuesta es JSON
+    .then(data => {
+        if (data.success) {
+            // Si la respuesta tiene un mensaje de éxito
+            showMessage(data.success, true);
+            location.reload(); // Recargar la página para reflejar el nuevo dato
+        } else {
+            // Si la respuesta tiene un mensaje de error
+            showMessage(data.error, false);
+        }
+    })
+    .catch(error => {
+        // Si hay un error en la solicitud o en la respuesta
+        console.error('Error al procesar la solicitud:', error);
+        showMessage('Ocurrió un error inesperado. Por favor, intenta de nuevo.', false);
     });
 });
+
+// Editar comida
+var editFoodModal = document.getElementById('editFoodModal');
+editFoodModal.addEventListener('show.bs.modal', function (event) {
+    var button = event.relatedTarget;
+    document.getElementById('editFoodId').value = button.getAttribute('data-id');
+    document.getElementById('editFoodName').value = button.getAttribute('data-name');
+    document.getElementById('editFoodDescription').value = button.getAttribute('data-description');
+});
+
+document.getElementById('editFoodForm').addEventListener('submit', function (e) {
+    e.preventDefault();  // Prevenir la recarga de la página al enviar el formulario
+
+    // Obtener los datos del formulario de edición
+    var formData = new FormData(this);
+
+    // Hacer la solicitud al servidor usando fetch
+    fetch('edit_food.php', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json()) // Asegurar de que la respuesta es JSON
+    .then(data => {
+        if (data.success) {
+            // Si la respuesta tiene un mensaje de éxito
+            showMessage(data.success, true);
+            location.reload(); // Recargar la página para reflejar los cambios
+        } else {
+            // Si la respuesta tiene un mensaje de error
+            showMessage(data.error, false);
+        }
+    })
+    .catch(error => {
+        // Si hay un error en la solicitud o en la respuesta
+        console.error('Error al procesar la solicitud:', error);
+        showMessage('Ocurrió un error inesperado. Por favor, intenta de nuevo.', false);
+    });
+});
+
+// Eliminar comida
+var deleteFoodModal = document.getElementById('deleteFoodModal');
+deleteFoodModal.addEventListener('show.bs.modal', function (event) {
+    var button = event.relatedTarget;
+    document.getElementById('confirmDeleteFood').setAttribute('data-id', button.getAttribute('data-id'));
+});
+
+document.getElementById('confirmDeleteFood').addEventListener('click', function () {
+    var id = this.getAttribute('data-id');
+
+    // Hacer la solicitud al servidor para eliminar la comida
+    fetch('delete_food.php?id=' + id, { method: 'GET' })
+    .then(response => response.json()) // Asegurar de que la respuesta es JSON
+    .then(data => {
+        if (data.success) {
+            // Si la respuesta tiene un mensaje de éxito
+            showMessage(data.success, true);
+            location.reload(); // Recargar la página para reflejar los cambios
+        } else {
+            // Si la respuesta tiene un mensaje de error
+            showMessage(data.error, false);
+        }
+    })
+    .catch(error => {
+        // Si hay un error en la solicitud o en la respuesta
+        console.error('Error al procesar la solicitud:', error);
+        showMessage('Ocurrió un error inesperado. Por favor, intenta de nuevo.', false);
+    });
+});
+
+});
+
 </script>
 </body>
 </html>
