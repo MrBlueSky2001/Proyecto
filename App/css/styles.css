@@ -1,8 +1,9 @@
 /* Tipografías */
 body {
-    font-family: serif;
+    font-family: 'Playfair Display', serif; /* Tipografía elegante para todo el texto */
     background-color: #F9F6F2; /* Fondo claro y elegante */
     color: #2F2F2F; /* Texto oscuro suave */
+    line-height: 1.6; /* Mejora la legibilidad */
 }
 
 h1, h2, h3, .logo {
@@ -19,27 +20,40 @@ h1, h2, h3, .logo {
 
 /* Estilos para el botón */
 .custom-btn {
-    background-color: #ffffff; /* Color marrón dorado */
+    background-color: #ffffff; /* Color blanco para el botón */
     border: 2px solid #D4AF37; /* Borde color dorado */
     color: black;
     font-size: 18px;
     padding: 10px 25px;
     border-radius: 25px;
     font-weight: 600;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease; /* Añadido color en la transición */
+    cursor: pointer; /* Cambia el cursor al pasar sobre el botón */
+    display: inline-block; /* Asegura que el botón se comporte como un bloque */
 }
 
 .custom-btn:hover {
-    background-color: #D4AF37; /* Tonalidad más clara al hacer hover */
+    background-color: #D4AF37; /* Color dorado al hacer hover */
     border-color: #D4AF37; /* Color dorado más vivo al hacer hover */
-    color: white;
+    color: white; /* Cambia el color del texto al blanco */
 }
 
-/* Footer elegante */
+/* Estilos para el footer elegante */
 .footer {
     background-color: #2F2F2F;
     width: 100%;
     padding: 15px;
     font-size: 14px;
     color: #ccc; /* Texto en color gris claro */
+    text-align: center; /* Centra el texto del footer */
+    position: relative; /* Asegura que se mantenga en el flujo del documento */
+}
+
+/* Estilos adicionales para mejorar la presentación */
+.container {
+    max-width: 800px; /* Limita el ancho del contenedor */
+    margin: 0 auto; /* Centra el contenedor */
+    padding: 20px; /* Espaciado interno */
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
 }

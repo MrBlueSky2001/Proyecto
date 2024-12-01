@@ -1,0 +1,90 @@
+-- Crear tabla de categorías de alimentos
+CREATE TABLE FoodCategory (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    category_name ENUM('Carnes', 'Pescados', 'Vegetales', 'Postres', 'Bebidas', 'Otros') NOT NULL
+);
+
+-- Modificar la tabla de comidas para incluir la categoría
+CREATE TABLE Food (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    restaurant_id INT,
+    category_id INT, -- Relación con la tabla FoodCategory
+    FOREIGN KEY (restaurant_id) REFERENCES Restaurant(id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES FoodCategory(id)
+        ON DELETE SET NULL
+);
+
+-- Crear tabla de restaurantes
+CREATE TABLE Restaurant (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    address TEXT,
+    phone_number VARCHAR(20),
+    email VARCHAR(255) UNIQUE,
+    description TEXT,
+    open_time TIME,
+    close_time TIME
+);
+
+-- Crear tabla de clientes
+CREATE TABLE Customer (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    phone_number VARCHAR(20),
+    address TEXT,
+    dni VARCHAR(20) NOT NULL UNIQUE,
+    role ENUM('customer', 'admin') DEFAULT 'customer' -- Nueva columna para rol
+);
+
+-- Crear tabla de comidas
+CREATE TABLE Food (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    restaurant_id INT,
+    FOREIGN KEY (restaurant_id) REFERENCES Restaurant(id)
+        ON DELETE CASCADE
+);
+
+-- Crear tabla de reservas
+CREATE TABLE Reservation (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT,
+    restaurant_id INT,
+    table_number INT,
+    reservation_date DATE,
+    reservation_time TIME,
+    number_of_guests INT,
+    status ENUM('pendiente', 'confirmado', 'cancelado') DEFAULT 'pendiente',
+    FOREIGN KEY (customer_id) REFERENCES Customer(id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (restaurant_id) REFERENCES Restaurant(id)
+        ON DELETE CASCADE
+);
+
+-- Crear tabla de pedidos anticipados
+CREATE TABLE PreOrder (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT,
+    reservation_id INT,
+    status ENUM('pendiente', 'confirmado', 'cancelado') DEFAULT 'pendiente',
+    FOREIGN KEY (customer_id) REFERENCES Customer(id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (reservation_id) REFERENCES Reservation(id)
+        ON DELETE CASCADE
+);
+
+-- Tabla intermedia para manejar la relación muchos a muchos entre PreOrder y Food
+CREATE TABLE PreOrder_Food (
+    preorder_id INT,
+    food_id INT,
+    PRIMARY KEY (preorder_id, food_id),
+    FOREIGN KEY (preorder_id) REFERENCES PreOrder(id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (food_id) REFERENCES Food(id)
+        ON DELETE CASCADE
+);
