@@ -88,3 +88,17 @@ CREATE TABLE PreOrder_Food (
     FOREIGN KEY (food_id) REFERENCES Food(id)
         ON DELETE CASCADE
 );
+
+CREATE TABLE PaymentMethod (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id INT, -- Relación con el cliente
+    type ENUM('Tarjeta de Crédito', 'Tarjeta de Débito', 'PayPal', 'Transferencia Bancaria', 'Otro') NOT NULL,
+    card_number VARCHAR(16), -- Opcional: para tarjetas
+    card_holder_name VARCHAR(255), -- Opcional: nombre del titular de la tarjeta
+    expiry_date DATE, -- Opcional: fecha de expiración de la tarjeta
+    iban VARCHAR(34), -- Opcional: para transferencias bancarias
+    paypal_email VARCHAR(255), -- Opcional: para PayPal
+    additional_info TEXT, -- Para otros detalles
+    FOREIGN KEY (customer_id) REFERENCES Customer(id)
+        ON DELETE CASCADE
+);
