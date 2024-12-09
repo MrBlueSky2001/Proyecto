@@ -10,6 +10,7 @@ CREATE TABLE Food (
     name VARCHAR(255) NOT NULL,
     description TEXT,
     restaurant_id INT,
+    price DECIMAL (10,2) NOT NULL, 
     category_id INT, -- Relación con la tabla FoodCategory
     FOREIGN KEY (restaurant_id) REFERENCES Restaurant(id)
         ON DELETE CASCADE,

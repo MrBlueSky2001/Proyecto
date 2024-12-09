@@ -16,16 +16,17 @@ $name = isset($_POST['name']) ? $_POST['name'] : '';
 $description = isset($_POST['description']) ? $_POST['description'] : '';
 $restaurant_id = isset($_POST['restaurant_id']) ? $_POST['restaurant_id'] : '';
 $category_id = isset($_POST['category_id']) ? $_POST['category_id'] : '';
+$price = isset($_POST['price']) ? $_POST['price'] : '';
 
 // Validar que los campos necesarios no estén vacíos
-if (empty($name) || empty($description) || empty($restaurant_id) || empty($category_id)) {
+if (empty($name) || empty($description) || empty($restaurant_id) || empty($category_id) || empty($price)) {
     echo json_encode(['error' => 'Todos los campos son obligatorios']);
     exit();
 }
 
 // Preparar la consulta para insertar la comida
-$stmt = $conn->prepare("INSERT INTO food (name, description, restaurant_id, category_id) VALUES (?, ?, ?, ?)");
-$stmt->bind_param('ssii', $name, $description, $restaurant_id, $category_id);
+$stmt = $conn->prepare("INSERT INTO food (name, description, price, restaurant_id, category_id) VALUES (?, ?, ?, ?, ?)");
+$stmt->bind_param('ssdii', $name, $description, $price, $restaurant_id, $category_id);
 
 // Ejecutar la consulta
 if ($stmt->execute()) {

@@ -202,8 +202,8 @@
                             <input type="text" class="form-control" id="card_holder_name" name="card_holder_name" required>
                         </div>
                         <div class="mb-3">
-                            <label for="expiry_date" class="form-label">Fecha de Expiración</label>
-                            <input type="month" class="form-control" id="expiry_date" name="expiry_date" required>
+                            <label for="expiry_date" class="form-label">Fecha de Expiración (YYYY-MM-DD)</label>
+                            <input type="text" class="form-control" id="expiry_date" name="expiry_date" required>
                         </div>
                     `;
                 } else if (type === 'Transferencia Bancaria') {

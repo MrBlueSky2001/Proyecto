@@ -41,7 +41,7 @@
     <body>
 
         <div class="content">
-            <h1>Bienvenido a la zona de gestión</h1>
+            <h1>Bienvenido a la zona de gestión de Olimpia</h1>
         </div>
 
         <ul class="menu">

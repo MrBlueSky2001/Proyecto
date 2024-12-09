@@ -60,18 +60,18 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-            // Lista de GIFs en la carpeta GIF
+            //Listado de GIFs en la carpeta GIF
             const gifs = ["GIF/01.gif", "GIF/02.gif"];
             let currentGifIndex = 0;
 
-            // Cambia el fondo cada 20 segundos
+            //Cambia el fondo cada 5 segundos
             setInterval(() => {
                 // Cambia al siguiente GIF
                 currentGifIndex = (currentGifIndex + 1) % gifs.length;
                 document.body.style.backgroundImage = `url('${gifs[currentGifIndex]}')`;
-            }, 5000); // 20000ms = 20 segundos
+            }, 5000); // 5000ms = 5 segundos
 
-            // Establece el primer GIF al cargar la página
+            //Establece el primer GIF al cargar la página
             document.body.style.backgroundImage = `url('${gifs[currentGifIndex]}')`;
         </script>
     </body>

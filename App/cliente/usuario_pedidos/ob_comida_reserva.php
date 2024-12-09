@@ -20,7 +20,7 @@
 
         // Obtener comidas del restaurante con sus categorías
         $stmt = $conn->prepare("
-            SELECT f.id, f.name, fc.category_name 
+            SELECT f.id, f.name, f.price, fc.category_name 
             FROM Food f
             JOIN FoodCategory fc ON f.category_id = fc.id
             WHERE f.restaurant_id = ?
@@ -43,7 +43,7 @@
                 }
                 echo "<div>
                         <input type='checkbox' name='food' value='{$food['id']}' id='food_{$food['id']}'>
-                        <label for='food_{$food['id']}'>{$food['name']}</label>
+                        <label for='food_{$food['id']}'>{$food['name']} - {$food['price']}€</label>
                     </div>";
             }
             echo "</div>";

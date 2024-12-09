@@ -77,6 +77,7 @@
                                             <th>ID</th>
                                             <th>Nombre</th>
                                             <th>Descripción</th>
+                                            <th>Precio</th>
                                             <th>Categoría</th>
                                             <th>Acciones</th>
                                         </tr>
@@ -84,7 +85,7 @@
                                     <tbody>
                                         <?php
                                         // Usamos INNER JOIN para obtener el category_name
-                                        $foods = $conn->query("SELECT food.id, food.name, food.description, foodcategory.category_name
+                                        $foods = $conn->query("SELECT food.id, food.name, food.description, food.price, foodcategory.category_name
                                                             FROM food
                                                             INNER JOIN foodcategory ON food.category_id = foodcategory.id
                                                             WHERE food.restaurant_id = " . $restaurant['id']);
@@ -93,10 +94,11 @@
                                                 <td><?= $food['id'] ?></td>
                                                 <td><?= $food['name'] ?></td>
                                                 <td><?= $food['description'] ?></td>
+                                                <td><?= $food['price'] ?> €</td> <!-- Mostrar el precio -->
                                                 <td><?= $food['category_name'] ?></td>
                                                 <td>
                                                     <!-- Botones para abrir los modales de editar y eliminar -->
-                                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editarComidaModal" data-id="<?= $food['id'] ?>" data-name="<?= $food['name'] ?>" data-description="<?= $food['description'] ?>" data-category="<?= $food['category_name'] ?>">Editar</button>
+                                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#editarComidaModal" data-id="<?= $food['id'] ?>" data-name="<?= $food['name'] ?>" data-description="<?= $food['description'] ?>" data-price="<?= $food['price'] ?>" data-category="<?= $food['category_name'] ?>">Editar</button>
                                                     <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#eliminarComidaModal" data-id="<?= $food['id'] ?>">Eliminar</button>
                                                 </td>
                                             </tr>
@@ -132,6 +134,10 @@
                                 <textarea class="form-control" id="anadirComidaDescripcion" name="description" required></textarea>
                             </div>
                             <div class="mb-3">
+                                <label for="anadirComidaPrecio" class="form-label">Precio (€)</label>
+                                <input type="number" class="form-control" id="anadirComidaPrecio" name="price" step="0.01" required>
+                            </div>
+                            <div class="mb-3">
                                 <label for="anadirComidaCategoria" class="form-label">Categoría</label>
                                 <select class="form-select" id="anadirComidaCategoria" name="category_id" required>
                                     <?php while ($category = $categories->fetch_assoc()): ?>
@@ -164,6 +170,10 @@
                             <div class="mb-3">
                                 <label for="editarComidaDescripcion" class="form-label">Descripción</label>
                                 <textarea class="form-control" id="editarComidaDescripcion" name="description" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label for="editarComidaPrecio" class="form-label">Precio (€)</label>
+                                <input type="number" class="form-control" id="editarComidaPrecio" name="price" step="0.01" required>
                             </div>
                             <button type="submit" class="btn btn-primary">Guardar Cambios</button>
                         </form>
@@ -200,7 +210,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" id="modalMessageContent">
-                        <!-- El contenido del mensaje se llenará aquí -->
+                        <!-- El contenido del mensaje se llenará aquí de manera dinámica-->
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
@@ -275,6 +285,7 @@
             document.getElementById('editarComidaId').value = button.getAttribute('data-id');
             document.getElementById('editarComidaNombre').value = button.getAttribute('data-name');
             document.getElementById('editarComidaDescripcion').value = button.getAttribute('data-description');
+            document.getElementById('editarComidaPrecio').value = button.getAttribute('data-price');
         });
 
         document.getElementById('editarComidaForm').addEventListener('submit', function (e) {

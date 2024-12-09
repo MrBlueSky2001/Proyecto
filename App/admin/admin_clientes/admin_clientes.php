@@ -62,7 +62,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Nombre de Usuario</th>
-                        <th>DNI</th> <!-- Nueva columna para DNI -->
+                        <th>DNI</th>
                         <th>Teléfono</th>
                         <th>Dirección</th>
                         <th>Rol</th>
@@ -74,7 +74,7 @@
                         <tr>
                             <td><?= $row['id'] ?></td>
                             <td><?= htmlspecialchars($row['username']) ?></td>
-                            <td><?= htmlspecialchars($row['dni']) ?></td> <!-- Mostrar DNI -->
+                            <td><?= htmlspecialchars($row['dni']) ?></td>
                             <td><?= htmlspecialchars($row['phone_number']) ?></td>
                             <td><?= htmlspecialchars($row['address']) ?></td>
                             <td><?= htmlspecialchars($row['role']) ?></td>
@@ -97,22 +97,22 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="editClienteModalLabel">Editar Cliente</h5>
-                            <button type <button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <button type=button class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form id="editCustomerForm">
+                            <form id="editClienteForm">
                                 <input type="hidden" id="editCustomerId">
                                 <div class="mb-3">
-                                    <label for="editUsername" class="form-label">Nombre de Usuario</label>
-                                    <input type="text" class="form-control" id="editUsername" required>
+                                    <label for="editNombre" class="form-label">Nombre de Usuario</label>
+                                    <input type="text" class="form-control" id="editNombre" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="editPhone" class="form-label">Teléfono</label>
-                                    <input type="text" class="form-control" id="editPhone" required>
+                                    <label for="editTelefono" class="form-label">Teléfono</label>
+                                    <input type="text" class="form-control" id="editTelefono" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="editAddress" class="form-label">Dirección</label>
-                                    <input type="text" class="form-control" id="editAddress" required>
+                                    <label for="editDireccion" class="form-label">Dirección</label>
+                                    <input type="text" class="form-control" id="editDireccion" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="editRole" class="form-label">Rol</label>
@@ -141,7 +141,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <a href="#" id="deleteConfirmBtn" class="btn btn-danger">Eliminar</a>
+                            <a href="#" id="botonConfirmarEliminacion" class="btn btn-danger">Eliminar</a>
                         </div>
                     </div>
                 </div>
@@ -161,18 +161,18 @@
                 var role = button.getAttribute('data-role');
 
                 document.getElementById('editCustomerId').value = id;
-                document.getElementById('editUsername').value = username;
-                document.getElementById('editPhone').value = phone;
-                document.getElementById('editAddress').value = address;
+                document.getElementById('editNombre').value = username;
+                document.getElementById('editTelefono').value = phone;
+                document.getElementById('editDireccion').value = address;
                 document.getElementById('editRole').value = role; 
             });
 
-            document.getElementById('editCustomerForm').addEventListener('submit', function (e) {
+            document.getElementById('editClienteForm').addEventListener('submit', function (e) {
                 e.preventDefault();
                 var id = document.getElementById('editCustomerId').value;
-                var username = document.getElementById('editUsername').value;
-                var phone = document.getElementById('editPhone').value;
-                var address = document.getElementById('editAddress').value;
+                var username = document.getElementById('editNombre').value;
+                var phone = document.getElementById('editTelefono').value;
+                var address = document.getElementById('editDireccion').value;
                 var role = document.getElementById('editRole').value;
 
                 fetch('edit_cliente.php', {
@@ -190,8 +190,8 @@
             eliminarClienteModal.addEventListener('show.bs.modal', function (event) {
                 var button = event.relatedTarget;
                 var customerId = button.getAttribute('data-id'); 
-                var deleteConfirmBtn = document.getElementById('deleteConfirmBtn');
-                deleteConfirmBtn.setAttribute('href', 'eliminar_cliente.php?id=' + customerId);
+                var botonConfirmarEliminacion = document.getElementById('botonConfirmarEliminacion');
+                botonConfirmarEliminacion.setAttribute('href', 'eliminar_cliente.php?id=' + customerId);
             });
         </script>
         <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>

@@ -34,6 +34,7 @@
                 border-radius: 5px;
                 box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
                 background-color: rgb(0, 0, 0);
+                text-align: center;
             }
             /* Footer elegante */
             .footer {
@@ -54,6 +55,7 @@
         <div class="content">
             <div class="olimpia">
                 <h1>Bienvenido a Olimpia</h1>
+                <h3>Tus sito web de reserva para restaurantes</h3>
             </div>
         </div>
 

@@ -34,12 +34,12 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
         <style>
             body {
-                background-color: #F8F5F2; /* Fondo de la página */
+                background-color: #F8F5F2;
             }
             h2 {
                 text-align: center;
                 margin-top: 20px;
-                color: #333; /* Color del título */
+                color: #333;
             }
             .list-group-item {
                 display: flex;
@@ -47,21 +47,21 @@
                 align-items: center;
             }
             .btn-custom {
-                background-color: #D4AF37; /* Color dorado para los botones */
+                background-color: #D4AF37;
                 color: white;
             }
             .btn-custom:hover {
-                background-color: #CDAA31; /* Color dorado más oscuro al hacer hover */
+                background-color: #CDAA31;
             }
             .modal-header {
-                background-color: #343a40; /* Color de fondo del encabezado del modal */
-                color: white; /* Color del texto del encabezado del modal */
+                background-color: #343a40;
+                color: white;
             }
             .modal-footer {
-                justify-content: space-between; /* Espacio entre botones del modal */
+                justify-content: space-between;
             }
             .footer {
-                background-color: #000; /* Fondo negro para el footer */
+                background-color: #000;
                 color: #ccc;
                 text-align: center;
                 padding: 15px;
@@ -104,10 +104,34 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-custom" id="confirm-preorder">Confirmar Pedido</button>
+                        <button type="button" class="btn btn-custom" id="confirmar-predido">Confirmar Pedido</button>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Modal genérico para alertas -->
+        <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-success">
+                        <h5 class="modal-title" id="alertModalLabel">Título</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        Mensaje
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2023 Tu Empresa. Todos los derechos reservados.</p>
         </div>
 
         <script>
@@ -140,21 +164,29 @@
                     });
                 });
 
-                $('#confirm-preorder').click(function() {
+                $('#confirmar-predido').click(function() {
                     var selectedFoods = [];
+                    
+                    // Recorre todos los checkboxes de comida seleccionados
                     $('input[name="food"]:checked').each(function() {
                         selectedFoods.push($(this).val());
                     });
+
+                    // Si no se ha seleccionado ninguna comida, mostrar una alerta
+                    if (selectedFoods.length === 0) {
+                        showAlertModal('Error', 'Debes seleccionar al menos un plato para realizar el pedido.', 'danger');
+                        return; // No continuar con el envío del pedido
+                    }
 
                     var reservationId = $('#pedidoModal').data('reservation-id');
 
                     // Enviar los datos al servidor para guardar el pedido
                     $.post('guardar_pedido.php', { 
                         foods: selectedFoods, 
-                        reservation_id: reservationId 
+                        reservation_id: reservationId
                     })
                     .done(function(response) {
-                        showAlertModal('Éxito', 'Pedido anticipado guardado con éxito', 'success');
+                        showAlertModal('Éxito', 'Pedido anticipado guardado con éxito. Si no asistes a tu reserva se te descontará el precio de los platos seleccionados.', 'success');
                         $('#pedidoModal').modal('hide');
                     })
                     .fail(function() {
@@ -163,29 +195,5 @@
                 });
             });
         </script>
-
-        <!-- Modal genérico para alertas -->
-        <div class="modal fade" id="alertModal" tabindex="-1" role="dialog" aria-labelledby="alertModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header bg-success">
-                        <h5 class="modal-title" id="alertModalLabel">Título</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        Mensaje
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="footer">
-            <p>&copy; 2023 Tu Empresa. Todos los derechos reservados.</p>
-        </div>
     </body>
 </html>

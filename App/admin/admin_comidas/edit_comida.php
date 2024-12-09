@@ -12,14 +12,15 @@ if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
 $id = $_POST['id'];
 $name = $_POST['name'];
 $description = $_POST['description'];
+$price = $_POST['price'];  // Recibimos el precio
 
-if (empty($id) || empty($name) || empty($description)) {
+if (empty($id) || empty($name) || empty($description) || empty($price)) {
     echo json_encode(['error' => 'Todos los campos son obligatorios']);
     exit();
 }
 
-$stmt = $conn->prepare("UPDATE food SET name = ?, description = ? WHERE id = ?");
-$stmt->bind_param('ssi', $name, $description, $id);
+$stmt = $conn->prepare("UPDATE food SET name = ?, description = ?, price = ? WHERE id = ?");
+$stmt->bind_param('ssdi', $name, $description, $price, $id);
 
 if ($stmt->execute()) {
     echo json_encode(['success' => 'Comida actualizada con éxito']);
