@@ -102,6 +102,22 @@
                     <div class="modal-body" id="modal-body-content">
                         <!-- Aquí se cargarán las comidas -->
                     </div>
+                    <div>
+                        <h5>Selecciona un Método de Pago</h5>
+                        <select id="payment-method" class="form-control">
+                            <option value="">Selecciona un método de pago</option>
+                            <?php
+                            // Obtener métodos de pago del cliente
+                            $stmt = $conn->prepare("SELECT id, type FROM PaymentMethod WHERE customer_id = ?");
+                            $stmt->bind_param("i", $user_id);
+                            $stmt->execute();
+                            $payment_methods = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+                            foreach ($payment_methods as $method) {
+                                echo "<option value='{$method['id']}'>{$method['type']}</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                         <button type="button" class="btn btn-custom" id="confirmar-predido">Confirmar Pedido</button>
@@ -172,9 +188,17 @@
                         selectedFoods.push($(this).val());
                     });
 
-                    // Si no se ha seleccionado ninguna comida, mostrar una alerta
+                    // Obtener el método de pago seleccionado
+                    var paymentMethodId = $('#payment-method').val();
+
+                    // Validar que se haya seleccionado al menos un plato y un método de pago
                     if (selectedFoods.length === 0) {
                         showAlertModal('Error', 'Debes seleccionar al menos un plato para realizar el pedido.', 'danger');
+                        return; // No continuar con el envío del pedido
+                    }
+
+                    if (!paymentMethodId) {
+                        showAlertModal('Error', 'Debes seleccionar un método de pago para continuar.', 'danger');
                         return; // No continuar con el envío del pedido
                     }
 
@@ -183,7 +207,8 @@
                     // Enviar los datos al servidor para guardar el pedido
                     $.post('guardar_pedido.php', { 
                         foods: selectedFoods, 
-                        reservation_id: reservationId
+                        reservation_id: reservationId,
+                        payment_method_id: paymentMethodId // Enviar el método de pago
                     })
                     .done(function(response) {
                         showAlertModal('Éxito', 'Pedido anticipado guardado con éxito. Si no asistes a tu reserva se te descontará el precio de los platos seleccionados.', 'success');

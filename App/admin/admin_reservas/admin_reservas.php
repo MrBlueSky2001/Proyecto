@@ -131,6 +131,7 @@ $result = $conn->query("
                 })
                 .then(response => response.text())
                 .then(data => {
+                    console.log('Respuesta del servidor:', data);
                     if (data === 'success') {
                         const container = document.getElementById(`status-container-${reservationId}`);
                         const color = newStatus === 'pendiente' ? 'blue' : (newStatus === 'confirmado' ? 'green' : 'red');

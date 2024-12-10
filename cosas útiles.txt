@@ -38,6 +38,7 @@ CREATE TABLE Customer (
     phone_number VARCHAR(20),
     address TEXT,
     dni VARCHAR(20) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL
     role ENUM('customer', 'admin') DEFAULT 'customer' -- Nueva columna para rol
 );
 

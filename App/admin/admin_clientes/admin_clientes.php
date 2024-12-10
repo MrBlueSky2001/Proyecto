@@ -9,7 +9,7 @@
     }
 
     // Consultar la lista de clientes
-    $result = $conn->query("SELECT id, username, dni, phone_number, address, role FROM customer");
+    $result = $conn->query("SELECT id, username, email, dni, phone_number, address, role FROM customer");
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -62,6 +62,7 @@
                     <tr>
                         <th>ID</th>
                         <th>Nombre de Usuario</th>
+                        <th>Email</th>
                         <th>DNI</th>
                         <th>Teléfono</th>
                         <th>Dirección</th>
@@ -74,12 +75,13 @@
                         <tr>
                             <td><?= $row['id'] ?></td>
                             <td><?= htmlspecialchars($row['username']) ?></td>
+                            <td><?= htmlspecialchars($row['email']) ?></td>
                             <td><?= htmlspecialchars($row['dni']) ?></td>
                             <td><?= htmlspecialchars($row['phone_number']) ?></td>
                             <td><?= htmlspecialchars($row['address']) ?></td>
                             <td><?= htmlspecialchars($row['role']) ?></td>
                             <td>
-                                <a href="#" class="text-primary" data-bs-toggle="modal" data-bs-target="#editClienteModal" data-id="<?= $row['id'] ?>" data-username="<?= htmlspecialchars($row['username']) ?>" data-dni="<?= htmlspecialchars($row['dni']) ?>" data-phone="<?= htmlspecialchars($row['phone_number']) ?>" data-address="<?= htmlspecialchars($row['address']) ?>" data-role="<?= htmlspecialchars($row['role']) ?>">
+                                <a href="#" class="text-primary" data-bs-toggle="modal" data-bs-target="#editClienteModal" data-id="<?= $row['id'] ?>" data-username="<?= htmlspecialchars($row['username']) ?>" data-email="<?=htmlspecialchars($row['email']) ?>" data-dni="<?= htmlspecialchars($row['dni']) ?>" data-phone="<?= htmlspecialchars($row['phone_number']) ?>" data-address="<?= htmlspecialchars($row['address']) ?>" data-role="<?= htmlspecialchars($row['role']) ?>">
                                     <ion-icon name="pencil-outline"></ion-icon> Editar
                                 </a> |
                                 <a href="#" class="text-danger" data-bs-toggle="modal" data-bs-target="#eliminarClienteModal" data-id="<?= $row['id'] ?>">
@@ -105,6 +107,10 @@
                                 <div class="mb-3">
                                     <label for="editNombre" class="form-label">Nombre de Usuario</label>
                                     <input type="text" class="form-control" id="editNombre" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="editEmail" class="form-label">Email</label>
+                                    <input type="text" class="form-control" id="editEmail" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="editTelefono" class="form-label">Teléfono</label>
@@ -156,12 +162,14 @@
                 var button = event.relatedTarget; // Botón que activó el modal
                 var id = button.getAttribute('data-id');
                 var username = button.getAttribute('data-username');
+                var email =button.getAttribute('data-email');
                 var phone = button.getAttribute('data-phone');
                 var address = button.getAttribute('data-address');
                 var role = button.getAttribute('data-role');
 
                 document.getElementById('editCustomerId').value = id;
                 document.getElementById('editNombre').value = username;
+                document.getElementById('editEmail').value = email;
                 document.getElementById('editTelefono').value = phone;
                 document.getElementById('editDireccion').value = address;
                 document.getElementById('editRole').value = role; 
@@ -171,6 +179,7 @@
                 e.preventDefault();
                 var id = document.getElementById('editCustomerId').value;
                 var username = document.getElementById('editNombre').value;
+                var email = document.getElementById('editEmail').value;
                 var phone = document.getElementById('editTelefono').value;
                 var address = document.getElementById('editDireccion').value;
                 var role = document.getElementById('editRole').value;
@@ -178,7 +187,7 @@
                 fetch('edit_cliente.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: `id=${id}&username=${username}&phone_number=${phone}&address=${address}&role=${role}`
+                    body: `id=${id}&username=${username}&email=${email}&phone_number=${phone}&address=${address}&role=${role}`
                 }).then(response => response.json()).then(data => {
                     if (data.success) {
                         location.reload();

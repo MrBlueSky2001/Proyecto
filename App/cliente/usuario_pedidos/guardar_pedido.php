@@ -11,13 +11,14 @@
         $customer_id = $_SESSION['user']['id'];
         $reservation_id = $_POST['reservation_id'];
         $foods = $_POST['foods'];
+        $payment_method_id = $_POST['payment_method_id'];
 
-        // Crear el pedido anticipado sin método de pago
+        // Crear el pedido anticipado con método de pago
         $stmt = $conn->prepare("
-            INSERT INTO PreOrder (customer_id, reservation_id, status)
-            VALUES (?, ?, 'pendiente')
+            INSERT INTO PreOrder (customer_id, reservation_id, status, payment_method_id)
+            VALUES (?, ?, 'pendiente', ?)
         ");
-        $stmt->bind_param("ii", $customer_id, $reservation_id);
+        $stmt->bind_param("iii", $customer_id, $reservation_id, $payment_method_id);
 
         if (!$stmt->execute()) {
             echo "Error al crear el pedido anticipado: " . $stmt->error;

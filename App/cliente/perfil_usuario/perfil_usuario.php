@@ -90,6 +90,10 @@
                     <label for="address" class="form-label">Dirección:</label>
                     <input type="text" class="form-control" id="address" name="address" value="<?php echo htmlspecialchars($user['address']); ?>" required>
                 </div>
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email:</label>
+                    <input type="text" class="form-control" id="email" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
+                </div>
                 <button type="submit" class="custom-btn">Guardar Cambios</button>
             </form>
 

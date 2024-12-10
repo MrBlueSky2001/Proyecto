@@ -7,11 +7,12 @@
         $phone_number = $_POST['phone_number'];
         $address = $_POST['address'];
         $dni = $_POST['dni'];
+        $email = $_POST['email'];
 
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
-        $stmt = $conn->prepare("INSERT INTO customer (username, password, phone_number, address, dni) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssss", $username, $hashed_password, $phone_number, $address, $dni);
+        $stmt = $conn->prepare("INSERT INTO customer (username, password, phone_number, address, dni, email) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssss", $username, $hashed_password, $phone_number, $address, $dni, $email);
 
         if ($stmt->execute()) {
             header('Location: cliente/dashboard_user.php');
@@ -100,6 +101,7 @@
                     <input type=" text" name="phone_number" placeholder="Número de teléfono" required class="form-control">
                     <textarea name="address" placeholder="Dirección" required class="form-control"></textarea>
                     <input type="text" id="dni" name="dni" placeholder="DNI" required class="form-control">
+                    <input type="text" id="dni" name="email" placeholder="email" required class="form-control">
                     <button type="submit" class="btn login-btn btn-block">Registrarse</button>
                 </form>
                 <p>¿Ya tienes una cuenta? <a href="login.php">Inicia sesión aquí</a></p>
