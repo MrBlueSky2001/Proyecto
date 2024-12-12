@@ -168,7 +168,7 @@
                 }
 
                 $('#pedidoModal').on('show.bs.modal', function(event) {
-                    var button = $(event.relatedTarget); // Botón que abrió el modal
+                    var button = $(event.relatedTarget); // Botón que abre el modal
                     var reservationId = button.data('reservation-id'); // Extraer información de los atributos data-*
 
                     // Asignar el reservation_id al modal
@@ -183,15 +183,15 @@
                 $('#confirmar-predido').click(function() {
                     var selectedFoods = [];
                     
-                    // Recorre todos los checkboxes de comida seleccionados
+                    // Recorremos todos los checkboxes de comida seleccionados
                     $('input[name="food"]:checked').each(function() {
                         selectedFoods.push($(this).val());
                     });
 
-                    // Obtener el método de pago seleccionado
+                    // Obtenemos el método de pago seleccionado
                     var paymentMethodId = $('#payment-method').val();
 
-                    // Validar que se haya seleccionado al menos un plato y un método de pago
+                    // Validamos que se haya seleccionado al menos un plato y un método de pago
                     if (selectedFoods.length === 0) {
                         showAlertModal('Error', 'Debes seleccionar al menos un plato para realizar el pedido.', 'danger');
                         return; // No continuar con el envío del pedido
@@ -204,11 +204,11 @@
 
                     var reservationId = $('#pedidoModal').data('reservation-id');
 
-                    // Enviar los datos al servidor para guardar el pedido
+                    // Enviamos los datos al servidor para guardar el pedido
                     $.post('guardar_pedido.php', { 
                         foods: selectedFoods, 
                         reservation_id: reservationId,
-                        payment_method_id: paymentMethodId // Enviar el método de pago
+                        payment_method_id: paymentMethodId // Enviamos el método de pago
                     })
                     .done(function(response) {
                         showAlertModal('Éxito', 'Pedido anticipado guardado con éxito. Si no asistes a tu reserva se te descontará el precio de los platos seleccionados.', 'success');

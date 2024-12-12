@@ -1,16 +1,17 @@
 <?php
     require_once '../../db_config.php';
-    session_start();
+    session_start(); // Iniciamos la sesión para poder verificar si el usuario está logueado
 
-    // Verificar que el usuario esté autenticado y sea administrador
+    // Verificamos que el usuario esté autenticado y sea administrador
     if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
-        header('Location: ../../login.php');
+        header('Location: ../../login.php'); // Redirigimos al login si no es admin
         exit();
     }
 
-    // Consultar la lista de clientes
+    // Realizamos una consulta SQL para obtener todos los clientes desde la base de datos
     $result = $conn->query("SELECT id, username, email, dni, phone_number, address, role FROM customer");
 ?>
+
 <!DOCTYPE html>
 <html lang="es">
     <head>
@@ -21,34 +22,34 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
         <style>
             body {
-                background-color: #F8F5F2; /* Fondo de la página */
+                background-color: #F8F5F2;
             }
             .container {
                 margin-top: 50px;
             }
             h1 {
-                color: #3498db; /* Título en color azul */
+                color: #3498db;
                 text-align: center;
                 margin-bottom: 20px;
             }
             .table {
-                background-color: white; /* Fondo blanco para la tabla */
-                border-radius: 8px; /* Bordes redondeados */
-                overflow: hidden; /* Para que los bordes redondeados se apliquen */
+                background-color: white;
+                border-radius: 8px;
+                overflow: hidden;
             }
             .table th {
-                background-color: #3498db; /* Encabezado de la tabla en azul */
-                color: white; /* Texto blanco en el encabezado */
+                background-color: #3498db;
+                color: white;
             }
             .table td a {
-                text-decoration: none; /* Sin subrayado en los enlaces */
+                text-decoration: none; 
             }
             .table td a:hover {
-                text-decoration: underline; /* Subrayado en hover */
+                text-decoration: underline;
             }
             .modal-header {
-                background-color: #3498db; /* Encabezado del modal en azul */
-                color: white; /* Texto blanco en el encabezado del modal */
+                background-color: #3498db; 
+                color: white; 
             }
         </style>
     </head>
@@ -156,13 +157,13 @@
         </div>
 
         <script>
-            // Llenar el modal de editar con los datos del cliente
-            var editClienteModal = document.getElementById('editClienteModal');
+           // Rellenamos el formulario del modal de edición con los datos del cliente seleccionado
+           var editClienteModal = document.getElementById('editClienteModal');
             editClienteModal.addEventListener('show.bs.modal', function (event) {
-                var button = event.relatedTarget; // Botón que activó el modal
+                var button = event.relatedTarget; // Obtenemos el botón que activó el modal
                 var id = button.getAttribute('data-id');
                 var username = button.getAttribute('data-username');
-                var email =button.getAttribute('data-email');
+                var email = button.getAttribute('data-email');
                 var phone = button.getAttribute('data-phone');
                 var address = button.getAttribute('data-address');
                 var role = button.getAttribute('data-role');
@@ -175,8 +176,9 @@
                 document.getElementById('editRole').value = role; 
             });
 
+            // Manejamos el envío del formulario de edición
             document.getElementById('editClienteForm').addEventListener('submit', function (e) {
-                e.preventDefault();
+                e.preventDefault(); // Evitamos el envío por defecto
                 var id = document.getElementById('editCustomerId').value;
                 var username = document.getElementById('editNombre').value;
                 var email = document.getElementById('editEmail').value;
@@ -184,17 +186,19 @@
                 var address = document.getElementById('editDireccion').value;
                 var role = document.getElementById('editRole').value;
 
+                // Enviamos los datos del cliente al servidor usando fetch
                 fetch('edit_cliente.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: `id=${id}&username=${username}&email=${email}&phone_number=${phone}&address=${address}&role=${role}`
                 }).then(response => response.json()).then(data => {
                     if (data.success) {
-                        location.reload();
+                        location.reload(); // Recargamos la página si la actualización tuvo éxito
                     }
                 });
             });
 
+            // Llenamos el modal de eliminación con el ID del cliente a eliminar
             var eliminarClienteModal = document.getElementById('eliminarClienteModal');
             eliminarClienteModal.addEventListener('show.bs.modal', function (event) {
                 var button = event.relatedTarget;

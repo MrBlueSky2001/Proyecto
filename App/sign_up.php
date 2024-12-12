@@ -1,26 +1,37 @@
 <?php
+    // Incluimos el archivo de configuración de la base de datos para conectarnos
     require_once 'db_config.php';
 
+    // Comprobamos si la solicitud que llega es de tipo POST, lo que indica que el formulario ha sido enviado
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $username = $_POST['username'];
-        $password = $_POST['password'];
-        $phone_number = $_POST['phone_number'];
-        $address = $_POST['address'];
-        $dni = $_POST['dni'];
-        $email = $_POST['email'];
+        // Recogemos los valores enviados a través del formulario
+        $username = $_POST['username']; // Nombre de usuario
+        $password = $_POST['password']; // Contraseña
+        $phone_number = $_POST['phone_number']; // Número de teléfono
+        $address = $_POST['address']; // Dirección
+        $dni = $_POST['dni']; // DNI
+        $email = $_POST['email']; // Correo electrónico
 
+        // Encriptamos la contraseña usando el algoritmo BCRYPT para almacenarla de forma segura
         $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 
+        // Preparamos la consulta para insertar los datos del usuario en la tabla 'customer'
         $stmt = $conn->prepare("INSERT INTO customer (username, password, phone_number, address, dni, email) VALUES (?, ?, ?, ?, ?, ?)");
+
+        // Asociamos los valores recogidos a la consulta utilizando el método bind_param
         $stmt->bind_param("ssssss", $username, $hashed_password, $phone_number, $address, $dni, $email);
 
+        // Intentamos ejecutar la consulta
         if ($stmt->execute()) {
+            // Si la consulta se ejecuta correctamente, redirigimos al usuario a su panel
             header('Location: cliente/dashboard_user.php');
-            exit();
+            exit(); // Finalizamos el script para evitar que se siga ejecutando
         } else {
+            // Si ocurre un error durante la ejecución de la consulta, lo mostramos en pantalla
             echo "Error al registrarse: " . $stmt->error;
         }
 
+        // Cerramos el statement para liberar los recursos
         $stmt->close();
     }
 ?>
@@ -39,17 +50,17 @@
                 display: flex;
                 flex-direction: column;
                 min-height: 100vh;
-                background-color: #F8F5F2; /* Fondo Blanco Marfil */
+                background-color: #F8F5F2;
                 font-family: 'Open Sans', sans-serif;
             }
             .container-fluid {
-                flex: 1; /* Permite que el contenedor principal ocupe todo el espacio disponible */
+                flex: 1;
                 display: flex;
                 justify-content: center;
                 align-items: center;
             }
             .login-form {
-                background-color: #FFFFFF; /* Fondo Blanco */
+                background-color: #FFFFFF;
                 padding: 30px;
                 border-radius: 8px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -60,16 +71,16 @@
                 margin-bottom: 15px;
             }
             .login-btn {
-                background-color: #000000; /* Fondo Negro */
-                color: #D4AF37; /* Texto Dorado */
+                background-color: #000000;
+                color: #D4AF37;
                 border: none;
                 border-radius: 5px;
                 padding: 10px;
                 transition: background-color 0.3s, color 0.3s;
             }
             .login-btn:hover {
-                background-color: #D4AF37; /* Fondo Dorado al pasar el mouse */
-                color: #000000; /* Texto Negro */
+                background-color: #D4AF37;
+                color: #000000;
             }
             .logo {
                 position: absolute;
@@ -80,8 +91,8 @@
                 width: 100px;
             }
             h2 {
-                font-family: 'Playfair Display', serif; /* Fuente para encabezados */
-                color: #000000; /* Texto Negro */
+                font-family: 'Playfair Display', serif;
+                color: #000000;
             }
         </style>
     </head>

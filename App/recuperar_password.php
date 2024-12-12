@@ -1,21 +1,29 @@
 <?php
+    // Incluimos el archivo de configuración de la base de datos para establecer la conexión
     require_once 'db_config.php';
 
-    $error = '';
-    $success = '';
+    // Variables para almacenar mensajes de error o éxito
+    $error = ''; // Mensaje de error
+    $success = ''; // Mensaje de éxito
 
+    // Comprobamos si el formulario se ha enviado (método POST)
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $username = $_POST['username'];
-        $dni = $_POST['dni'];
+        // Capturamos los datos enviados desde el formulario
+        $username = $_POST['username']; // Nombre de usuario ingresado
+        $dni = $_POST['dni']; // DNI ingresado
 
+        // Preparamos una consulta para buscar un usuario que coincida con el nombre y el DNI
         $stmt = $conn->prepare('SELECT * FROM customer WHERE username = ? AND dni = ?');
-        $stmt->bind_param("ss", $username, $dni);
-        $stmt->execute();
-        $result = $stmt->get_result();
+        $stmt->bind_param("ss", $username, $dni); // Asociamos los valores a la consulta
+        $stmt->execute(); // Ejecutamos la consulta
+        $result = $stmt->get_result(); // Obtenemos el resultado de la consulta
 
+        // Comprobamos si existe un usuario que coincida con los datos ingresados
         if ($result->num_rows === 1) {
+            // Si hay coincidencia, mostramos un mensaje de éxito
             $success = 'Usuario verificado. Por favor, introduce tu nueva contraseña.';
         } else {
+            // Si no hay coincidencia, mostramos un mensaje de error
             $error = 'El nombre de usuario y DNI no coinciden.';
         }
     }
@@ -35,17 +43,17 @@
                 display: flex;
                 flex-direction: column;
                 min-height: 100vh;
-                background-color: #F8F5F2; /* Fondo Blanco Marfil */
+                background-color: #F8F5F2;
                 font-family: 'Open Sans', sans-serif;
             }
             .container-fluid {
-                flex: 1; /* Permite que el contenedor principal ocupe todo el espacio disponible */
+                flex: 1;
                 display: flex;
                 justify-content: center;
                 align-items: center;
             }
             .recover-form {
-                background-color: #FFFFFF; /* Fondo Blanco */
+                background-color: #FFFFFF;
                 padding: 30px;
                 border-radius: 8px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -56,16 +64,16 @@
                 margin-bottom: 15px;
             }
             .recover-btn {
-                background-color: #000000; /* Fondo Negro */
-                color: #D4AF37; /* Texto Dorado */
+                background-color: #000000;
+                color: #D4AF37;
                 border: none;
                 border-radius: 5px;
                 padding: 10px;
                 transition: background-color 0.3s, color 0.3s;
             }
             .recover-btn:hover {
-                background-color: #D4AF37; /* Fondo Dorado al pasar el mouse */
-                color: #000000; /* Texto Negro */
+                background-color: #D4AF37;
+                color: #000000;
             }
             .logo {
                 position: absolute;
@@ -76,8 +84,8 @@
                 width: 100px;
             }
             h2 {
-                font-family: 'Playfair Display', serif; /* Fuente para encabezados */
-                color: #000000; /* Texto Negro */
+                font-family: 'Playfair Display', serif;
+                color: #000000;
             }
         </style>
     </head>

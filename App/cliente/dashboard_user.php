@@ -1,13 +1,17 @@
 <?php
+    // Conecto a la configuración de la base de datos para poder interactuar con ella
     require_once '../db_config.php';
+    // Inicio una sesión para gestionar datos del usuario mientras navega
     session_start();
 
-    // Verificar que el usuario esté autenticado y sea un usuario
+    // Compruebo si el usuario está autenticado y su rol es 'customer'
     if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'customer') {
+        // Si no está autenticado o no es un cliente, lo redirijo a la página de login
         header('Location: ../login.php');
-        exit();
+        exit(); // Detengo la ejecución del script para evitar que continúe
     }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="es">
@@ -42,10 +46,10 @@
                 width: 100%;
                 padding: 15px;
                 font-size: 14px;
-                color: #ccc; /* Texto en color gris claro */
-                position: relative; /* Cambiado a relative para evitar superposición */
+                color: #ccc;
+                position: relative;
                 text-align: center;
-                z-index: 10; /* Asegura que esté por encima de otros elementos */
+                z-index: 10;
             }
         </style>
     </head>
@@ -85,7 +89,6 @@
 
         </ul>
 
-        <!-- Ionicons para los iconos del menú -->
         <script
             type="module"
             src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
@@ -98,21 +101,23 @@
         <!-- JavaScript para el toggle del menú -->
         <script>
             $(document).ready(function () {
+                // Selecciono el botón de toggle y el menú
                 let menuToggle = document.querySelector(".menuToggle");
                 let menu = document.querySelector(".menu");
 
+                // Al hacer clic en el botón, alterno la clase "active" del menú
                 menuToggle.onclick = function () {
                     menu.classList.toggle("active");
 
                     if (menu.classList.contains("active")) {
-                        // Mostrar los nombres
+                        // Si el menú está activo, muestro los nombres de los ítems
                         $(".menu li a").each(function () {
                             let name = $(this).data("name");
                             let tooltip = $('<span class="tooltip"></span>').text(name);
                             $(this).append(tooltip);
                         });
                     } else {
-                        // Ocultar los nombres
+                        // Si no, los elimino
                         $(".tooltip").remove();
                     }
                 };

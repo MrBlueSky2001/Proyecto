@@ -1,26 +1,29 @@
 <?php
+    // Incluimos el archivo de configuración de la base de datos y el inicio de sesión
     require_once '../../db_config.php';
     session_start();
 
+    // Verificamos si el usuario ha iniciado sesión y si es un administrador
     if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+        // Si no es admin, redirigimos al login
         header('Location: ../../login.php');
         exit();
     }
 
-    // Inicializar la variable de búsqueda
+    // Inicializamos la variable de búsqueda para las consultas
     $searchQuery = '';
 
-    // Verificar si se ha enviado una consulta de búsqueda
+    // Verificamos si se ha enviado una consulta de búsqueda a través del GET
     if (isset($_GET['search'])) {
         $searchQuery = $_GET['search'];
     }
 
-    // Preparar la consulta SQL
+    // Preparamos la consulta SQL para buscar restaurantes por nombre (ignorando mayúsculas)
     $stmt = $conn->prepare("SELECT * FROM restaurant WHERE LOWER(name) LIKE LOWER(?)");
-    $searchParam = '%' . $searchQuery . '%';
-    $stmt->bind_param("s", $searchParam);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $searchParam = '%' . $searchQuery . '%'; // Establecemos el parámetro de búsqueda con comodines
+    $stmt->bind_param("s", $searchParam); // Vinculamos el parámetro de búsqueda
+    $stmt->execute(); // Ejecutamos la consulta
+    $result = $stmt->get_result(); // Obtenemos los resultados de la consulta
 ?>
 
 <!DOCTYPE html>
@@ -73,6 +76,7 @@
     </head>
     <body>
         <div class="container">
+            <h4 class="text-start"><a href="../dashboard_admin.php">Volver al menú</a></h4>
             <h1>Gestión de Restaurantes</h1>
             
             <!-- Barra de búsqueda -->
@@ -223,8 +227,9 @@
         <script>
             // Añadir nuevo restaurante
             document.getElementById('anadirRestauranteForm').addEventListener('submit', function(e) {
-                e.preventDefault();
+                e.preventDefault(); // Evitamos el envío por defecto del formulario
 
+                // Recogemos los valores del formulario
                 var name = document.getElementById('restaurantName').value;
                 var address = document.getElementById('restaurantAddress').value;
                 var phone = document.getElementById('restaurantPhone').value;
@@ -233,20 +238,21 @@
                 var openTime = document.getElementById('restaurantOpenTime').value;
                 var closeTime = document.getElementById('restaurantCloseTime').value;
 
+                // Envíamos la información del restaurante al servidor utilizando fetch
                 fetch('anadir_restaurante.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: `name=${encodeURIComponent(name)}&address=${encodeURIComponent(address)}&phone_number=${encodeURIComponent(phone)}&email=${encodeURIComponent(email)}&description=${encodeURIComponent(description)}&open_time=${encodeURIComponent(openTime)}&close_time=${encodeURIComponent(closeTime)}`
                 }).then(response => {
-                    return response.json(); // Aquí se espera un JSON
+                    return response.json(); // Esperamos un JSON como respuesta
                 }).then(data => {
                     if (data.success) {
-                        location.reload();
+                        location.reload(); // Recargamos la página si la creación fue exitosa
                     } else {
-                        alert('Error al añadir el restaurante: ' + data.error);
+                        alert('Error al añadir el restaurante: ' + data.error); // Mostramos error si falla
                     }
                 }).catch(error => {
-                    console.error('Error:', error);
+                    console.error('Error:', error); // Mostramos errores en la consola
                     alert('Se produjo un error al procesar la solicitud.');
                 });
             });
@@ -264,7 +270,7 @@
                 var openTime = button.getAttribute('data-open-time'); 
                 var closeTime = button.getAttribute('data-close-time'); 
 
-                // Establece los valores en los campos del formulario
+                // Establecemos los valores en los campos del formulario
                 document.getElementById('editarRestauranteId').value = id;
                 document.getElementById('editarRestauranteName').value = name;
                 document.getElementById('editarRestauranteAddress').value = address;

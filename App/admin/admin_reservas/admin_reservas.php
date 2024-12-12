@@ -1,21 +1,25 @@
 <?php
-require_once '../../db_config.php';
-session_start();
+    require_once '../../db_config.php';
 
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
-    header('Location: ../../login.php');
-    exit();
-}
+    // Iniciamos sesión para asegurar que solo los usuarios autenticados puedan acceder
+    session_start();
 
-// Consulta para obtener datos de la reserva
-$result = $conn->query("
-    SELECT reservation.id, customer.username, restaurant.name AS restaurant_name,
-           reservation.reservation_date, reservation.reservation_time, reservation.table_number,
-           reservation.number_of_guests, reservation.status
-    FROM reservation
-    JOIN customer ON reservation.customer_id = customer.id
-    JOIN restaurant ON reservation.restaurant_id = restaurant.id
-");
+    // Verificamos si el usuario está autenticado y si tiene el rol de 'admin'
+    // Si no está autenticado o no tiene el rol adecuado, redirigimos a la página de login
+    if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+        header('Location: ../../login.php');  // Redirigimos al login si no es admin
+        exit();
+    }
+
+    // Realizamos la consulta SQL para obtener los datos de las reservas
+    $result = $conn->query("
+        SELECT reservation.id, customer.username, restaurant.name AS restaurant_name,
+            reservation.reservation_date, reservation.reservation_time, reservation.table_number,
+            reservation.number_of_guests, reservation.status
+        FROM reservation
+        JOIN customer ON reservation.customer_id = customer.id
+        JOIN restaurant ON reservation.restaurant_id = restaurant.id
+    ");
 ?>
 
 <!DOCTYPE html>
@@ -36,22 +40,22 @@ $result = $conn->query("
         ></script>
         <style>
             body {
-                background-color: #F8F5F2; /* Fondo de la página */
+                background-color: #F8F5F2;
             }
             h1 {
-                color: #3498db; /* Título en color azul */
+                color: #3498db;
                 text-align: center;
                 margin-top: 20px;
             }
             .table {
                 margin: 20px auto;
-                background-color: white; /* Fondo blanco para la tabla */
-                border-radius: 8px; /* Bordes redondeados */
-                overflow: hidden; /* Para que los bordes redondeados se apliquen */
+                background-color: white;
+                border-radius: 8px;
+                overflow: hidden;
             }
             .table th {
-                background-color: #3498db; /* Encabezado de la tabla en azul */
-                color: white; /* Texto blanco en el encabezado */
+                background-color: #3498db;
+                color: white;
             }
             .status-button {
                 border: none;
@@ -109,8 +113,10 @@ $result = $conn->query("
         </div>
 
         <script>
+            // Función para permitir la edición del estado de la reserva
             function editarEstatus(reservationId, currentStatus) {
                 const container = document.getElementById(`status-container-${reservationId}`);
+                // Generamos un menú desplegable para cambiar el estado de la reserva
                 container.innerHTML = `
                     <select onchange="actualizarEstatus(${reservationId}, this.value)">
                         <option value="pendiente" ${currentStatus === 'pendiente' ? 'selected' : ''}>Pendiente</option>
@@ -120,29 +126,33 @@ $result = $conn->query("
                 `;
             }
 
+            // Función para actualizar el estado de la reserva en la base de datos
             function actualizarEstatus(reservationId, newStatus) {
                 const formData = new FormData();
-                formData.append('id', reservationId);
-                formData.append('status', newStatus);
+                formData.append('id', reservationId);  // Agregamos el ID de la reserva
+                formData.append('status', newStatus);  // Agregamos el nuevo estado seleccionado
 
+                // Enviamos la solicitud POST al servidor para actualizar el estado
                 fetch('act_estatus.php', {
                     method: 'POST',
                     body: formData
                 })
-                .then(response => response.text())
+                .then(response => response.text())  // Obtenemos la respuesta del servidor
                 .then(data => {
                     console.log('Respuesta del servidor:', data);
                     if (data === 'success') {
+                        // Si la actualización tuvo éxito, actualizamos la interfaz con el nuevo estado
                         const container = document.getElementById(`status-container-${reservationId}`);
                         const color = newStatus === 'pendiente' ? 'blue' : (newStatus === 'confirmado' ? 'green' : 'red');
                         container.innerHTML = `
                             <button 
                                 style="background-color: ${color}; color: white; border: none; padding: 5px 10px; border-radius: 5px;"
-                                onclick="editStatus(${reservationId}, '${newStatus}')">
-                                ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}
+                                onclick="editarEstatus(${reservationId}, '${newStatus}')">
+                                ${newStatus.charAt(0).toUpperCase() + newStatus.slice(1)}  <!-- Primer letra en mayúscula -->
                             </button>
                         `;
                     } else {
+                        // Si ocurrió un error, mostramos un mensaje de alerta
                         alert('Error al actualizar el estado.');
                     }
                 });

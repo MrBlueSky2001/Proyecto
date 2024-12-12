@@ -1,30 +1,45 @@
 <?php
+    // Incluimos el archivo de configuración para la base de datos
     require_once 'db_config.php';
+
+    // Iniciamos la sesión para poder gestionar los datos del usuario
     session_start();
 
+    // Variable para almacenar errores que puedan surgir durante el inicio de sesión
     $error = '';
 
+    // Comprobamos si la petición es de tipo POST (cuando el usuario envía el formulario)
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        // Recogemos los datos enviados desde el formulario de inicio de sesión
         $username = $_POST['username'];
         $password = $_POST['password'];
 
+        // Preparamos una consulta para buscar al usuario en la base de datos
         $stmt = $conn->prepare('SELECT * FROM customer WHERE username = ?');
+        // Vinculamos el nombre de usuario a la consulta para evitar inyección SQL
         $stmt->bind_param("s", $username);
+        // Ejecutamos la consulta
         $stmt->execute();
+        // Obtenemos el resultado de la consulta
         $result = $stmt->get_result();
 
+        // Obtenemos los datos del usuario (si existe) como un array asociativo
         $user = $result->fetch_assoc();
 
+        // Comprobamos si el usuario existe y si la contraseña proporcionada es correcta
         if ($user && password_verify($password, $user['password'])) {
+            // Guardamos los datos del usuario en la sesión para que persistan mientras esté conectado
             $_SESSION['user'] = $user;
 
+            // Redirigimos al usuario según su rol: administrador o cliente
             if ($user['role'] === 'admin') {
-                header('Location: admin/dashboard_admin.php');
+                header('Location: admin/dashboard_admin.php'); // Panel de administrador
             } elseif ($user['role'] === 'customer') {
-                header('Location: cliente/dashboard_user.php');
+                header('Location: cliente/dashboard_user.php'); // Panel de cliente
             }
-            exit();
+            exit(); // Finalizamos el script para evitar que se ejecute código adicional
         } else {
+            // Si las credenciales no son válidas, mostramos un mensaje de error
             $error = 'Usuario o contraseña incorrectos.';
         }
     }
@@ -44,17 +59,17 @@
                 display: flex;
                 flex-direction: column;
                 min-height: 100vh;
-                background-color: #F8F5F2; /* Fondo Blanco Marfil */
+                background-color: #F8F5F2;
                 font-family: 'Open Sans', sans-serif;
             }
             .container-fluid {
-                flex: 1; /* Permite que el contenedor principal ocupe todo el espacio disponible */
+                flex: 1;
                 display: flex;
                 justify-content: center;
                 align-items: center;
             }
             .login-form {
-                background-color: #FFFFFF; /* Fondo Blanco */
+                background-color: #FFFFFF; 
                 padding: 30px;
                 border-radius: 8px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -65,16 +80,16 @@
                 margin-bottom: 15px;
             }
             .login-btn {
-                background-color: #000000; /* Fondo Negro */
-                color: #D4AF37; /* Texto Dorado */
+                background-color: #000000;
+                color: #D4AF37;
                 border: none;
                 border-radius: 5px;
                 padding: 10px;
                 transition: background-color 0.3s, color 0.3s;
             }
             .login-btn:hover {
-                background-color: #D4AF37; /* Fondo Dorado al pasar el mouse */
-                color: #000000; /* Texto Negro */
+                background-color: #D4AF37;
+                color: #000000;
             }
             .logo {
                 position: absolute;
@@ -85,8 +100,8 @@
                 width: 100px;
             }
             h2 {
-                font-family: 'Playfair Display', serif; /* Fuente para encabezados */
-                color: #000000; /* Texto Negro */
+                font-family: 'Playfair Display', serif; 
+                color: #000000; 
             }
         </style>
     </head>

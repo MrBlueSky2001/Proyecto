@@ -1,15 +1,22 @@
 <?php 
+    // Incluimos el archivo que maneja la edición del perfil del usuario
     require_once 'edit_perfil_usuario.php'; 
 
+    // Obtenemos los parámetros de éxito y error de la URL, si existen
     $success = $_GET['success'] ?? '';
     $error = $_GET['error'] ?? '';
 
+    // Obtenemos el ID del cliente desde el array de usuario
     $customer_id = $user['id'];
-    $payment_methods = [];
+    $payment_methods = []; // Inicializamos un array para almacenar los métodos de pago
+
+    // Preparamos una consulta SQL para seleccionar todos los métodos de pago del cliente
     $stmt = $conn->prepare("SELECT * FROM PaymentMethod WHERE customer_id = ?");
-    $stmt->bind_param("i", $customer_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt->bind_param("i", $customer_id); // Vinculamos el ID del cliente como parámetro entero
+    $stmt->execute(); // Ejecutamos la consulta
+    $result = $stmt->get_result(); // Obtenemos el resultado de la consulta
+
+    // Reconocemos los resultados y se añaden al array de métodos de pago
     while ($row = $result->fetch_assoc()) {
         $payment_methods[] = $row;
     }
@@ -150,39 +157,41 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script>
+            // Manejamos el envío del formulario para añadir un método de pago
             document.getElementById('anadirMetodoPagoForm').addEventListener('submit', function(event) {
-                event.preventDefault();
-                const formData = new FormData(this);
-                fetch('guardar_metodo_pago.php', {
+                event.preventDefault(); // Prevenimos el comportamiento por defecto del formulario
+                const formData = new FormData(this); // Creamos un objeto FormData con los datos del formulario
+                fetch ('guardar_metodo_pago.php', {
                     method: 'POST',
-                    body: formData
+                    body: formData // Enviamos los datos del formulario al servidor
                 })
-                .then(response => response.text())
+                .then(response => response.text()) // Esperamos la respuesta del servidor
                 .then(data => {
-                    document.getElementById('container-metodo-pago').insertAdjacentHTML('beforeend', data);
-                    document.getElementById('anadirMetodoPagoForm').reset();
+                    document.getElementById('container-metodo-pago').insertAdjacentHTML('beforeend', data); // Añadimos el nuevo método de pago a la lista
+                    document.getElementById('anadirMetodoPagoForm').reset(); // Reiniciamos el formulario
                     const modal = bootstrap.Modal.getInstance(document.getElementById('anadirMetodoPagoModal'));
-                    modal.hide();
+                    modal.hide(); // Cerramos el modal
                 })
                 .catch(error => console.error('Error:', error));
             });
 
+            // Manejamos el click en el botón de eliminar método de pago
             document.addEventListener('click', function(event) {
                 if (event.target.classList.contains('eliminar-metodo-pago')) {
-                    const id = event.target.getAttribute('data-id');
+                    const id = event.target.getAttribute('data-id'); // Obtenemos el ID del método de pago a eliminar
                     fetch('eliminar_metodo_pago.php', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json' // Establecemos el tipo de contenido
                         },
-                        body: JSON.stringify({ id: id })
+                        body: JSON.stringify({ id: id }) // Enviamos el ID como JSON
                     })
-                    .then(response => response.json())
+                    .then(response => response.json()) // Esperamos la respuesta en formato JSON
                     .then(data => {
                         if (data.success) {
-                            document.getElementById('metodo-pago-' + id).remove();
+                            document.getElementById('metodo-pago-' + id).remove(); // Eliminamos el método de pago de la lista
                         } else {
-                            alert(data.message || 'Error al eliminar el método de pago.');
+                            alert(data.message || 'Error al eliminar el método de pago.'); // Mostramos un mensaje de error
                         }
                     })
                     .catch(error => console.error('Error:', error));

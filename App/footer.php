@@ -1,4 +1,3 @@
-<!-- footer.php -->
 <footer class="footer bg-dark text-white mt-5">
     <div class="container text-center py-3">
         <p>&copy; 2024 Proyecto. Todos los derechos reservados.</p>

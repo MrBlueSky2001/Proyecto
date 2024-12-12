@@ -1,21 +1,25 @@
 <?php
-require_once '../../db_config.php';
-session_start();
+    require_once '../../db_config.php';
 
-if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
-    header('Location: ../../login.php');
-    exit();
-}
+    // Iniciamos la sesión para tener acceso a las variables de sesión, como el usuario logueado
+    session_start();
 
-// Consulta para obtener los pedidos anticipados y la información relacionada
-$result = $conn->query("
-    SELECT preorder.id AS preorder_id, customer.username, reservation.id AS reservation_id, 
-        reservation.reservation_date, reservation.reservation_time, preorder.status 
-    FROM preorder
-    JOIN customer ON preorder.customer_id = customer.id
-    JOIN reservation ON preorder.reservation_id = reservation.id
-    ORDER BY reservation.reservation_date DESC, reservation.reservation_time DESC
-");
+    // Verificamos que el usuario esté autenticado y tenga el rol de 'admin'. Si no es así, redirigimos al login.
+    if (!isset($_SESSION['user']) || $_SESSION['user']['role'] !== 'admin') {
+        // Si el usuario no es admin, redirigimos al login
+        header('Location: ../../login.php');
+        exit(); // Terminamos el script si no se cumplen las condiciones
+    }
+
+    // Realizamos una consulta SQL para obtener la información de los pedidos anticipados y las reservas asociadas
+    $result = $conn->query("
+        SELECT preorder.id AS preorder_id, customer.username, reservation.id AS reservation_id, 
+            reservation.reservation_date, reservation.reservation_time, preorder.status 
+        FROM preorder
+        JOIN customer ON preorder.customer_id = customer.id
+        JOIN reservation ON preorder.reservation_id = reservation.id
+        ORDER BY reservation.reservation_date DESC, reservation.reservation_time DESC
+    ");
 ?>
 
 <!DOCTYPE html>
@@ -127,27 +131,28 @@ $result = $conn->query("
         </div>
 
         <script>
-            // Mostrar el modal con las comidas
+            // Mostramos el modal con las comidas del pedido anticipado
             $(document).on('click', '.preorder-link', function(e) {
                 e.preventDefault();
-                var preorderId = $(this).data('preorder-id');
-                $('#modal-body-content').html('<p>Cargando...</p>');
-                $('#ComidaModal').modal('show');
+                var preorderId = $(this).data('preorder-id'); // Obtenemos el ID del pedido anticipado
+                $('#modal-body-content').html('<p>Cargando...</p>'); // Mostramos mensaje de carga
+                $('#ComidaModal').modal('show'); // Mostrar el modal
 
+                // Realizamos una solicitud AJAX para obtener las comidas del pedido anticipado
                 $.ajax({
                     url: 'ob_comida_pedido.php',
                     type: 'POST',
                     data: { preorder_id: preorderId },
                     success: function(data) {
-                        $('#modal-body-content').html(data);
+                        $('#modal-body-content').html(data); // Cargamos el contenido de las comidas en el modal
                     },
                     error: function() {
-                        $('#modal-body-content').html('<p>Error al cargar las comidas.</p>');
+                        $('#modal-body-content').html('<p>Error al cargar las comidas.</p>'); // Mostramos error si falla la solicitud
                     }
                 });
             });
 
-            // Cambiar el estado del pedido anticipado
+            // Cambiamos el estado del pedido anticipado
             function editarEstatus(preorderId, currentStatus) {
                 const container = document.getElementById(`status-container-${preorderId}`);
                 container.innerHTML = `
@@ -159,11 +164,13 @@ $result = $conn->query("
                 `;
             }
 
+            // Actualizamos el estado del pedido anticipado en la base de datos
             function actualizarEstatus(preorderId, newStatus) {
                 const formData = new FormData();
-                formData.append('id', preorderId);
-                formData.append('status', newStatus);
+                formData.append('id', preorderId); // Agregamos el ID del pedido anticipado
+                formData.append('status', newStatus); // Agregamos el nuevo estado
 
+                // Enviamos la solicitud AJAX para actualizar el estado
                 fetch('act_estatus_pedido.php', {
                     method: 'POST',
                     body: formData
@@ -173,6 +180,7 @@ $result = $conn->query("
                     if (data === 'success') {
                         const container = document.getElementById(`status-container-${preorderId}`);
                         const statusClass = newStatus === 'pendiente' ? 'status-pending' : (newStatus === 'confirmado' ? 'status-confirmed' : 'status-canceled');
+                        // Actualizamos el botón con el nuevo estado
                         container.innerHTML = `
                             <button 
                                 class="status-button ${statusClass}"
@@ -181,7 +189,7 @@ $result = $conn->query("
                             </button>
                         `;
                     } else {
-                        alert('Error al actualizar el estado.');
+                        alert('Error al actualizar el estado.'); // Mostramos alerta si hay un error
                     }
                 });
             }
