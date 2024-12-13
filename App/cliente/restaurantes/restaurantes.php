@@ -128,7 +128,8 @@
             function abrirModalReserva(idRestaurante) {
                 document.getElementById('idRestaurante').value = idRestaurante; // Asignamos el ID del restaurante al campo oculto
 
-                // Realizamos una solicitud para obtener los horarios del restaurante
+                // Realizamos una solicitud para obtener los horarios del restaurante con fetch, el cual es una API moderna de JavaScript
+                // que realiza peticiones HTTP de manera asíncrona.
                 fetch(`ob_hora_restaurante.php?restaurant_id=${idRestaurante}`)
                     .then(response => {
                         if (!response.ok) {
@@ -157,7 +158,8 @@
 
                 const datosFormulario = new FormData(this); // Creamos un objeto FormData con los datos del formulario
 
-                // Realizamos una solicitud POST para hacer la reserva
+                // Realizamos una solicitud POST para hacer la reserva usando fetch, el cual es una API moderna de JavaScript
+                // que realiza peticiones HTTP de manera asíncrona.
                 fetch('hacer_reserva.php', {
                     method: 'POST',
                     body: datosFormulario,

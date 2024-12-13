@@ -186,7 +186,8 @@
                 var address = document.getElementById('editDireccion').value;
                 var role = document.getElementById('editRole').value;
 
-                // Enviamos los datos del cliente al servidor usando fetch
+                // Enviamos los datos del cliente al servidor usando fetch, el cual es una API moderna de JavaScript
+                // que realiza peticiones HTTP de manera asíncrona.
                 fetch('edit_cliente.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

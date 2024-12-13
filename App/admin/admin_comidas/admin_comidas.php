@@ -303,7 +303,8 @@
                     // Obtenemos los datos del formulario
                     var formData = new FormData(this);
 
-                    // Hacemos la solicitud al servidor usando fetch
+                    // Hacemos la solicitud al servidor usando fetch, el cual es una API moderna de JavaScript
+                    // que realiza peticiones HTTP de manera asíncrona.
                     fetch('anadir_comida.php', {
                         method: 'POST',
                         body: formData
@@ -342,7 +343,8 @@
                     // Obtenemos los datos del formulario de edición
                     var formData = new FormData(this);
 
-                    // Hacemos la solicitud al servidor usando fetch
+                    // Hacemos la solicitud al servidor usando fetch, el cual es una API moderna de JavaScript
+                    // que realiza peticiones HTTP de manera asíncrona.
                     fetch('edit_comida.php', {
                         method: 'POST',
                         body: formData
@@ -375,7 +377,8 @@
                 document.getElementById('confirmaEliminarComida').addEventListener('click', function () {
                     var id = this.getAttribute('data-id');
 
-                    // Hacemos la solicitud al servidor para eliminar la comida
+                    // Hacemos la solicitud al servidor para eliminar la comida con fetch, el cual es una API moderna de JavaScript
+                    // que realiza peticiones HTTP de manera asíncrona.
                     fetch('eliminar_comida.php?id=' + id, { method: 'GET' })
                         .then(response => response.json()) // Aseguramos de que la respuesta es JSON
                         .then(data => {

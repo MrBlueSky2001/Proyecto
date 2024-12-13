@@ -138,7 +138,8 @@
                 $('#modal-body-content').html('<p>Cargando...</p>'); // Mostramos mensaje de carga
                 $('#ComidaModal').modal('show'); // Mostrar el modal
 
-                // Realizamos una solicitud AJAX para obtener las comidas del pedido anticipado
+                // Realizamos una solicitud AJAX para obtener las comidas del pedido anticipado. El método $.ajax() es una función de la biblioteca jQuery 
+                // que permite realizar solicitudes asíncronas (Para usar $.ajax tuve que añadir un enlace a su biblioteca)
                 $.ajax({
                     url: 'ob_comida_pedido.php',
                     type: 'POST',

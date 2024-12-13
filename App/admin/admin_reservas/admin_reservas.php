@@ -132,7 +132,8 @@
                 formData.append('id', reservationId);  // Agregamos el ID de la reserva
                 formData.append('status', newStatus);  // Agregamos el nuevo estado seleccionado
 
-                // Enviamos la solicitud POST al servidor para actualizar el estado
+                // Enviamos la solicitud POST al servidor para actualizar el estado usando fetch, el cual es una API moderna de JavaScript
+                // que realiza peticiones HTTP de manera asíncrona.
                 fetch('act_estatus.php', {
                     method: 'POST',
                     body: formData

@@ -161,6 +161,8 @@
             document.getElementById('anadirMetodoPagoForm').addEventListener('submit', function(event) {
                 event.preventDefault(); // Prevenimos el comportamiento por defecto del formulario
                 const formData = new FormData(this); // Creamos un objeto FormData con los datos del formulario
+                // Enviamos la solicitud POST al servidor para guardar el método de pago usando fetch, el cual es una API moderna de JavaScript
+                // que realiza peticiones HTTP de manera asíncrona.
                 fetch ('guardar_metodo_pago.php', {
                     method: 'POST',
                     body: formData // Enviamos los datos del formulario al servidor
@@ -179,6 +181,8 @@
             document.addEventListener('click', function(event) {
                 if (event.target.classList.contains('eliminar-metodo-pago')) {
                     const id = event.target.getAttribute('data-id'); // Obtenemos el ID del método de pago a eliminar
+                    // Enviamos la solicitud POST al servidor para la eliminación del método de pago usando fetch, el cual es una API moderna de JavaScript
+                    // que realiza peticiones HTTP de manera asíncrona.
                     fetch('eliminar_metodo_pago.php', {
                         method: 'POST',
                         headers: {

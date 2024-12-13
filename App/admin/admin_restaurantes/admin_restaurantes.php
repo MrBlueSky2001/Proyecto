@@ -238,7 +238,8 @@
                 var openTime = document.getElementById('restaurantOpenTime').value;
                 var closeTime = document.getElementById('restaurantCloseTime').value;
 
-                // Envíamos la información del restaurante al servidor utilizando fetch
+                // Envíamos la información del restaurante al servidor utilizando fetch, el cual es una API moderna de JavaScript
+                // que realiza peticiones HTTP de manera asíncrona.
                 fetch('anadir_restaurante.php', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
